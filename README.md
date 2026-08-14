@@ -8,6 +8,7 @@
 [![NeonDB](https://img.shields.io/badge/NeonDB-Serverless%20Postgres-00e599?logo=postgresql)](https://neon.tech/)
 [![Drizzle ORM](https://img.shields.io/badge/Drizzle-ORM-C5F74F)](https://orm.drizzle.team/)
 [![TanStack Query](https://img.shields.io/badge/TanStack%20Query-v5-ff4154?logo=reactquery)](https://tanstack.com/query)
+[![GSAP](https://img.shields.io/badge/GSAP-3.12-88CE02?logo=greensock)](https://gsap.com/)
 
 ---
 
@@ -21,39 +22,45 @@
 
 ---
 
-## ✨ Core Features
+## ✨ Core Features & Pages
 
-### 1. 🗣️ Conversational AI Dump (`/dump`)
-* Parse compound freeform sentences into individual transaction records using Groq's high-speed inference.
-* Decomposes multi-item sentences into discrete entries (e.g. separates personal food expenses from money lent to a friend).
-* Displays **Editable Confirmation Cards** before saving to the database.
-* Case-insensitive category normalizer that matches user/starter categories and falls back strictly to `"Uncategorized"`.
+### 1. 🌐 Animated Landing Page (`/`)
+* **Editorial Aesthetics:** Warm Zelt styling (Parchment, Linen, Paper, Ink, and single Honey primary accent).
+* **GSAP Choreography:** Staggered headline entrance, floating ambient glow badges, and dynamic "Go to Dashboard &rarr;" action button when authenticated.
+* **Live Interactive Typing Simulation:** Real-time animated simulator cycling through real-world financial scenarios.
+* **Interactive Testing Sandbox:** Visitors can test custom statements live with instant card breakdown.
+* **Problem vs. Solution Matrix & FAQs:** Transparent side-by-side comparison explaining the friction-free value proposition.
 
-### 2. 📊 Deterministic Dashboard (`/`)
+### 2. 📊 Deterministic Financial Dashboard (`/dashboard`)
 * **Zero AI Calls:** Instant, cost-free SQL aggregations via Drizzle ORM.
 * **Key Metrics:** Monthly Total Expenses, Monthly Total Income, Net Balance, and Total Money Owed to You.
 * **Category Breakdown:** Neutral-palette horizontal bar chart showing category distributions.
 * **Spending Trend:** Daily accumulation curve across the current month.
 * **Money Owed to You:** Live debt tracker with one-click **"Attach Contact"** and **"Send Reminder"** buttons.
 
-### 3. 📝 Complete Entries Ledger & CRUD (`/entries`)
+### 3. 🗣️ Conversational AI Dump (`/dump`)
+* Parse compound freeform sentences into individual transaction records using Groq's high-speed inference.
+* Decomposes multi-item sentences into discrete entries (e.g. separates personal food expenses from money lent to a friend).
+* Displays **Editable Confirmation Cards** before saving to the database.
+* Case-insensitive category normalizer that matches user/starter categories and falls back strictly to `"Uncategorized"`.
+
+### 4. 📝 Complete Entries Ledger & CRUD (`/entries`)
 * Filter by movement type (`All`, `Expenses`, `Income`, `Lent`, `Borrowed`), Category, Debt Status (`Open` vs `Settled`), or text search.
 * Direct **"+ Record Entry"** modal for manual income or expense logging without using AI.
-* Inline editing, contact attachment, debt status toggles, and delete actions with instant TanStack Query cache invalidation.
+* Inline editing, contact attachment, debt status toggles, and delete actions with instant TanStack Query cache synchronization.
 
-### 4. 👥 People & Contact Management (`/people`)
+### 5. 👥 People & Contact Management (`/people`)
 * Manage contacts with name, email (required for reminder dispatch), and optional phone number.
 * Contacts link directly to open debts for transactional payment reminders.
 
-### 5. 🏷️ Category Management (`/categories`)
+### 6. 🏷️ Category Management (`/categories`)
 * Predefined starter categories (*Food, Groceries, Fuel, Transport, Trips, Bills, Rent, Entertainment, Salary/Income, Uncategorized*).
 * Custom user-defined category creation.
 
-### 6. 🎨 "Zelt" Warm Editorial Design System
-* **Warm Neutral Palette:** Sunlit Parchment canvas (`#e4e0dd`), Linen (`#f6f3ef`), Paper (`#ffffff`), and deep Ink (`#121718`).
-* **Single Accent Rule:** Honey Amber (`#ffcd6d`) is reserved exclusively for the primary call-to-action per view.
-* **Shape Language:** 12px pill radius, hairline borders (`1px` at `8%` opacity), and **zero drop shadows**.
-* **Responsive Sidebar & Mobile Drawer:** Full desktop sidebar with slide-over drawer for mobile devices.
+### 7. 🎨 Sidebar Navigation & Responsive Drawer
+* **Desktop Sidebar:** Fixed left drawer with instant access to Dashboard, Entries, AI Dump, People, and Categories.
+* **Mobile Slide-Over Drawer:** Touch-friendly hamburger menu for smartphones and tablets.
+* **Context-Aware Shell:** Sidebar automatically hides on public routes (`/`, `/login`, `/register`) and activates within the app.
 
 ---
 
@@ -62,9 +69,9 @@
 ```
 fin-twin/
 ├── apps/
-│   └── web/                   → Next.js 15 App Router (React 19, Tailwind CSS, TanStack Query)
-│       ├── src/app/           → App routes (/, /entries, /dump, /people, /categories, /landing, /login)
-│       ├── src/components/    → UI design system, sidebar layout, dialogs, charts
+│   └── web/                   → Next.js 15 App Router (React 19, Tailwind CSS, TanStack Query, GSAP)
+│       ├── src/app/           → App routes (/, /dashboard, /entries, /dump, /people, /categories, /login)
+│       ├── src/components/    → UI design system, sidebar layout, landing sections, dialogs, charts
 │       └── src/lib/           → TanStack Query hooks, Better Auth client, email utility
 ├── packages/
 │   ├── core/                  → Groq AI Dump parser, Zod output schemas, category matching engine
@@ -88,6 +95,7 @@ fin-twin/
 * **AI Provider:** [Groq SDK](https://groq.com/) (`llama-3.3-70b-versatile` / `llama-3.1-8b-instant`)
 * **Database & ORM:** [NeonDB](https://neon.tech/) (Serverless Postgres) + [Drizzle ORM](https://orm.drizzle.team/)
 * **State & Data Fetching:** [TanStack Query v5](https://tanstack.com/query) (React Query)
+* **Animation:** [GSAP 3](https://gsap.com/) + [@gsap/react](https://gsap.com/resources/React)
 * **Authentication:** [Better Auth](https://better-auth.com/)
 * **Styling:** [Tailwind CSS](https://tailwindcss.com/) ("Zelt" editorial design tokens)
 * **Data Visualization:** [Recharts](https://recharts.org/)
