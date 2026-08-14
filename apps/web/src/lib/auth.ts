@@ -16,6 +16,9 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  secret: process.env.BETTER_AUTH_SECRET || 'fin-twin-dev-secret-key-32-chars-long!',
+  secret:
+    process.env.BETTER_AUTH_SECRET ||
+    process.env.BETTER_AUTH_API_KEY ||
+    'fin-twin-dev-secret-key-32-chars-long!',
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
 });
