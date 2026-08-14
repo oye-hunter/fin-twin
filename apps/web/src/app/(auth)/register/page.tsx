@@ -30,7 +30,7 @@ export default function RegisterPage() {
       if (res.error) {
         setError(res.error.message || 'Failed to create account');
       } else {
-        router.push('/');
+        router.push('/dashboard');
         router.refresh();
       }
     } catch (err: any) {

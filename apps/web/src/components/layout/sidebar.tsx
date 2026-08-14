@@ -10,7 +10,6 @@ import {
   Users,
   Tag,
   LogOut,
-  Sparkle,
   Compass,
   X,
 } from 'lucide-react';
@@ -27,12 +26,11 @@ export function Sidebar({ mobileOpen = false, onCloseMobile }: SidebarProps) {
   const { data: session } = useSession();
 
   const navItems = [
-    { href: '/', label: 'Overview', icon: LayoutDashboard },
+    { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
     { href: '/entries', label: 'All Entries', icon: Receipt },
     { href: '/dump', label: 'AI Dump', icon: Sparkles, badge: 'AI' },
     { href: '/people', label: 'People & Debts', icon: Users },
     { href: '/categories', label: 'Categories', icon: Tag },
-    { href: '/landing', label: 'About & Features', icon: Compass },
   ];
 
   return (
@@ -55,7 +53,7 @@ export function Sidebar({ mobileOpen = false, onCloseMobile }: SidebarProps) {
         <div>
           <div className="flex items-center justify-between pb-6 mb-4 border-b border-ink/8">
             <Link
-              href="/"
+              href="/dashboard"
               onClick={onCloseMobile}
               className="flex items-center gap-2.5 group"
             >
@@ -113,7 +111,16 @@ export function Sidebar({ mobileOpen = false, onCloseMobile }: SidebarProps) {
         </div>
 
         {/* User Account / Footer */}
-        <div className="pt-4 border-t border-ink/8">
+        <div className="pt-4 border-t border-ink/8 space-y-3">
+          <Link
+            href="/"
+            onClick={onCloseMobile}
+            className="flex items-center gap-2 text-xs text-ink/60 hover:text-ink px-2 py-1 transition-colors"
+          >
+            <Compass className="w-3.5 h-3.5" />
+            <span>Landing Page</span>
+          </Link>
+
           {session?.user ? (
             <div className="bg-paper rounded-[12px] p-3 border border-ink/8 flex items-center justify-between">
               <div className="truncate mr-2">

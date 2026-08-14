@@ -3,6 +3,6 @@
 import React from 'react';
 import { LandingPage } from '@/components/landing/landing-page';
 
-export default function DedicatedLandingRoute() {
+export default function LandingPageRoute() {
   return <LandingPage />;
 }
