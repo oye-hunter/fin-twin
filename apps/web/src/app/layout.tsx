@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { FloatingNav } from '@/components/nav/floating-nav';
+import { QueryProvider } from '@/components/providers/query-provider';
+import { AppShell } from '@/components/layout/app-shell';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -22,14 +23,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.className}>
-      <body className="min-h-screen bg-parchment text-ink antialiased flex flex-col">
-        <FloatingNav />
-        <main className="flex-1 w-full max-w-[1100px] mx-auto px-4 py-8">
-          {children}
-        </main>
-        <footer className="w-full max-w-[1100px] mx-auto px-4 py-8 text-center text-xs text-ink/40">
-          Fin-Twin &copy; {new Date().getFullYear()} &middot; Built with Next.js, Groq & NeonDB
-        </footer>
+      <body className="min-h-screen bg-parchment text-ink antialiased">
+        <QueryProvider>
+          <AppShell>{children}</AppShell>
+        </QueryProvider>
       </body>
     </html>
   );

@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Trash2, CheckCircle2, ArrowRight, UserPlus, Tag, Plus, Loader2 } from 'lucide-react';
+import { Sparkles, Trash2, CheckCircle2, ArrowRight, Loader2 } from 'lucide-react';
 import { useSession } from '@/lib/auth-client';
+import { useCategories, usePeople } from '@/lib/queries';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -21,57 +23,28 @@ interface ParsedCardItem {
   note: string;
 }
 
-interface CategoryOption {
-  id: string;
-  name: string;
-}
-
-interface PersonOption {
-  id: string;
-  name: string;
-}
-
 export default function DumpPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { data: session } = useSession();
+  const { data: catData } = useCategories();
+  const { data: peopleData } = usePeople();
 
   const [rawText, setRawText] = useState('');
   const [parsing, setParsing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [parsedCards, setParsedCards] = useState<ParsedCardItem[]>([]);
-  const [categories, setCategories] = useState<CategoryOption[]>([]);
-  const [people, setPeople] = useState<PersonOption[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
+
+  const categories = catData?.categories || [];
+  const people = peopleData?.people || [];
 
   const samplePrompts = [
     'Spent $45 on groceries and lent $20 to Sarah for coffee',
     'Received 3500 salary and paid 1100 rent',
     'Paid 24 for taxi to airport on Monday',
   ];
-
-  // Load categories and people
-  useEffect(() => {
-    fetch('/api/categories')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.categories) {
-          setCategories(data.categories.map((c: any) => ({ id: c.id, name: c.name })));
-        }
-      })
-      .catch(console.error);
-
-    if (session?.user) {
-      fetch('/api/people')
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.people) {
-            setPeople(data.people.map((p: any) => ({ id: p.id, name: p.name })));
-          }
-        })
-        .catch(console.error);
-    }
-  }, [session]);
 
   const handleParse = async (textToParse?: string) => {
     const text = textToParse || rawText;
@@ -95,12 +68,10 @@ export default function DumpPage() {
 
       if (data.entries && data.entries.length > 0) {
         const cards: ParsedCardItem[] = data.entries.map((item: any, idx: number) => {
-          // Map categoryId if exists
           const cat = categories.find(
             (c) => c.name.toLowerCase() === item.categoryName?.toLowerCase()
           );
 
-          // Map personId if exists
           const p = item.personName
             ? people.find((pers) => pers.name.toLowerCase() === item.personName?.toLowerCase())
             : null;
@@ -165,6 +136,10 @@ export default function DumpPage() {
         throw new Error(data.error || 'Failed to save entries');
       }
 
+      // Invalidate TanStack query cache for instant sync
+      queryClient.invalidateQueries({ queryKey: ['entries'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+
       setSaveSuccess(true);
       setParsedCards([]);
       setRawText('');
@@ -180,7 +155,7 @@ export default function DumpPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <Badge variant="honey" className="gap-1.5 py-1 px-3">
+          <Badge variant="honey" className="gap-1.5 py-1 px-3 font-semibold">
             <Sparkles className="w-3.5 h-3.5" />
             Natural Language Ingestion
           </Badge>
@@ -238,7 +213,7 @@ export default function DumpPage() {
             variant="primary"
             disabled={parsing || !rawText.trim()}
             onClick={() => handleParse()}
-            className="ml-auto flex items-center gap-2"
+            className="ml-auto flex items-center gap-2 font-semibold"
           >
             {parsing ? (
               <>
@@ -270,12 +245,12 @@ export default function DumpPage() {
             <div>
               <h4 className="font-bold text-ink text-sm">Entries saved to database!</h4>
               <p className="text-xs text-ink/60 mt-0.5">
-                Your transactions are now reflected on the dashboard.
+                Your transactions are instantly synchronized with your dashboard and ledger.
               </p>
             </div>
           </div>
           <Link href="/">
-            <Button size="sm" variant="primary" className="flex items-center gap-1.5">
+            <Button size="sm" variant="primary" className="flex items-center gap-1.5 font-semibold">
               View Dashboard
               <ArrowRight className="w-3.5 h-3.5" />
             </Button>
@@ -410,14 +385,6 @@ export default function DumpPage() {
                         </option>
                       ))}
                     </select>
-                    {people.length === 0 && (
-                      <p className="text-[11px] text-ink/50 mt-1">
-                        No contacts yet.{' '}
-                        <Link href="/people" className="underline text-ink font-semibold">
-                          Add in People tab
-                        </Link>
-                      </p>
-                    )}
                   </div>
                 )}
 

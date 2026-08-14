@@ -1,0 +1,8 @@
+'use client';
+
+import React from 'react';
+import { LandingPage } from '@/components/landing/landing-page';
+
+export default function DedicatedLandingRoute() {
+  return <LandingPage />;
+}
