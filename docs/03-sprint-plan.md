@@ -125,23 +125,23 @@ Each sprint produces a working, testable milestone.
 
 ---
 
-## Sprint 7: Telegram Bot — Inbound AI Dump
-**Focus:** Prove the "chat app → AI dump" flow end-to-end on Telegram (chosen over Discord and ahead of WhatsApp — see `00-project-overview.md` scope decisions for rationale).
+## Sprint 7: Slack Bot — Inbound AI Dump
+**Focus:** Prove the "chat app → AI dump" flow end-to-end on Slack (chosen over Telegram, which is blocked/throttled in Pakistan, and over Discord, which can't DM a user without a shared server — see `00-project-overview.md` scope decisions for rationale).
 
 ### Deliverables:
-1. **Bot & Webhook:**
-   - New Telegram bot via BotFather.
-   - Webhook endpoint in `apps/web` (e.g. `/api/telegram/webhook`).
+1. **Slack App & Event Handling:**
+   - New Slack app in a private single-user workspace (for testing).
+   - Events API endpoint in `apps/web` (e.g. `/api/slack/events`) subscribed to `message.im`, or Socket Mode for local dev without a public URL.
 2. **Account Linking:**
-   - New `telegram_links` table (see `01-data-model.md`).
-   - User generates a one-time code in the web app's settings; sends it once to the bot to link their Telegram chat ID to their Fin-Twin account.
+   - New `slack_links` table (see `01-data-model.md`).
+   - User generates a one-time code in the web app's settings; sends it once to the bot's DM to link their Slack user ID to their Fin-Twin account.
 3. **Message Handling:**
    - Text messages route directly into the existing `parseDumpEntries()`.
-   - Voice messages: download the audio file, transcribe (Groq's Whisper models), then route into the same parser.
-   - Bot replies with a short structured summary and asks for confirmation ("Got it: Rs 800 · Food · today. Reply yes to save, or tell me what's wrong") before writing to the DB.
-4. **Scope — out (do not build yet):** WhatsApp itself; proactive reminder sends over Telegram (reminders stay on email for now).
+   - Voice messages: download the audio file attachment, transcribe (Groq's Whisper models), then route into the same parser.
+   - Bot replies via `chat.postMessage` with a short structured summary and asks for confirmation ("Got it: Rs 800 · Food · today. Reply yes to save, or tell me what's wrong") before writing to the DB.
+4. **Scope — out (do not build yet):** WhatsApp itself; proactive reminder sends over Slack (reminders stay on email for now).
 5. **Verification:**
-   - A linked user can send a text or voice message to the bot and see the resulting entry appear in their web dashboard after confirming.
+   - A linked user can send a text or voice message to the bot's DM and see the resulting entry appear in their web dashboard after confirming.
 
 ---
 
@@ -205,13 +205,13 @@ Each sprint produces a working, testable milestone.
 ---
 
 ## Sprint 12: WhatsApp Integration
-**Focus:** Bring the same inbound-dump + confirmation flow to WhatsApp, plus outbound reminder sends, after the Telegram flow (Sprint 7) is proven.
+**Focus:** Bring the same inbound-dump + confirmation flow to WhatsApp, plus outbound reminder sends, after the Slack flow (Sprint 7) is proven.
 
 ### Deliverables:
 1. **WhatsApp Business API setup:**
    - Meta Cloud API or Twilio. Expect approval/verification lead time — start this early.
 2. **Inbound flow:**
-   - Reuse the webhook → transcribe (if voice) → `parseDumpEntries()` → confirm → save flow built for Telegram.
+   - Reuse the webhook → transcribe (if voice) → `parseDumpEntries()` → confirm → save flow built for Slack.
 3. **Outbound:**
    - "Send Reminder" option to deliver via WhatsApp template message, alongside the existing email option.
 4. **Verification:**

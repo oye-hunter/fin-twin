@@ -14,7 +14,7 @@
 - **People are added manually only.** The AI never auto-creates a person. If a dump entry mentions an unrecognized name, the UI prompts the user to manually pick an existing person or add a new one — the AI does not guess or auto-create.
 - **Categories are picked from existing list (predefined + custom) by the AI**, but **new categories are created by the user only**, never invented/created by the AI on the fly. If the AI can't confidently match a category, it falls back to "Uncategorized."
 - **Reminder emails require a real send** (via an email provider), not just a mailto link — this should trigger from a "Send reminder" button next to any open lend entry.
-- **Chat-platform inbound dump: Telegram, not Discord.** Discord bots cannot DM a user unless the user shares a server with the bot, and receiving free-text messages requires a persistent Gateway WebSocket connection rather than a simple webhook. Telegram allows a direct 1:1 chat with the bot (no shared server needed) over a stateless webhook, which fits this app's use case (a personal, private dump channel) and infra (serverless Next.js API routes) far better. WhatsApp is the eventual production target for the same flow, planned after Telegram validates it, due to WhatsApp Business API's longer approval/verification lead time.
+- **Chat-platform inbound dump: Slack, not Telegram or Discord.** Telegram is blocked/throttled by Pakistan's PTA across major ISPs, making it unreliable for this app's target users without a VPN. Discord bots cannot DM a user unless the user shares a server with the bot, and receiving free-text messages requires a persistent Gateway WebSocket connection rather than a simple webhook. Slack is not blocked in Pakistan, supports a stateless webhook (Events API, or Socket Mode for local dev without a public URL), and a private single-user workspace is trivial to set up for testing. WhatsApp remains the eventual production target for the same flow, planned after Slack validates it, due to WhatsApp Business API's longer approval/verification lead time.
 
 ## Tech stack
 - **Framework:** Next.js (App Router), TypeScript
@@ -53,7 +53,7 @@ packages/
       client.ts           → Drizzle + NeonDB client
       env.ts               → env var validation
       schema.ts            → people, categories, entries tables (+ Phase 2 additions,
-                            see 01-data-model.md: telegram_links, budgets, repayments)
+                            see 01-data-model.md: slack_links, budgets, repayments)
       seed.ts               → seeds default categories
       index.ts
     drizzle.config.ts
@@ -65,7 +65,7 @@ style: cream/parchment canvas, near-black ink text, one honey-amber accent used 
 primary actions, pill-shaped 12px-radius components, hairline borders, no drop shadows.
 
 ## Project status
-The hackathon build (Sprints 1–5 in `03-sprint-plan.md`) is complete and shipped. The project is now in an active post-hackathon phase (Sprint 6 onward) — hardening the AI provider, adding a Telegram-based inbound dump channel, and building out budgets, partial repayments, recurring entries, and eventually WhatsApp.
+The hackathon build (Sprints 1–5 in `03-sprint-plan.md`) is complete and shipped. The project is now in an active post-hackathon phase (Sprint 6 onward) — hardening the AI provider, adding a Slack-based inbound dump channel, and building out budgets, partial repayments, recurring entries, and eventually WhatsApp.
 
 ## How to use these docs with an AI coding agent
 Do not paste all four docs into one prompt. Feed them in this order, one sprint at a time:

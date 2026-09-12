@@ -1,4 +1,4 @@
-import Groq from 'groq-sdk';
+import Groq, { toFile } from 'groq-sdk';
 import { dumpPayloadSchema, dumpJsonSchema } from './dump';
 import { matchCategory } from './categories';
 import { SYSTEM_PROMPT, buildUserPrompt } from './prompt';
@@ -125,3 +125,34 @@ export async function parseDumpEntries(options: ParseOptions): Promise<ParseDump
     error: 'Parsing failed after retries',
   };
 }
+
+export interface TranscribeOptions {
+  audioBuffer: Buffer;
+  filename?: string;
+  mimeType?: string;
+  apiKey?: string;
+  model?: string;
+}
+
+export async function transcribeAudio(options: TranscribeOptions): Promise<string> {
+  const {
+    audioBuffer,
+    filename = 'audio.mp3',
+    apiKey = process.env.GROQ_KEY || process.env.GROQ_API_KEY,
+    model = 'whisper-large-v3-turbo',
+  } = options;
+
+  if (!apiKey) {
+    throw new Error('Groq API Key is not configured for audio transcription');
+  }
+
+  const groq = new Groq({ apiKey });
+  const file = await toFile(audioBuffer, filename);
+  const response = await groq.audio.transcriptions.create({
+    file,
+    model,
+  });
+
+  return response.text;
+}
+
