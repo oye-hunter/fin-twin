@@ -1,4 +1,4 @@
-import { parseDumpEntries } from '../src/agent';
+import { parseDumpEntries, groqModel } from '../src/agent';
 
 const knownCategories = [
   'Food',
@@ -15,6 +15,13 @@ const knownCategories = [
 
 async function runAgentTests() {
   console.log('Testing Groq AI Dump Agent...');
+
+  // Verify groqModel default
+  const defaultModel = groqModel();
+  console.log(`Using Groq model: ${defaultModel}`);
+  if (defaultModel !== 'openai/gpt-oss-20b' && !process.env.GROQ_MODEL) {
+    throw new Error(`Expected default model to be openai/gpt-oss-20b, got: ${defaultModel}`);
+  }
 
   // Test 1: Single transaction
   console.log('Test 1: Single expense...');
@@ -56,8 +63,8 @@ async function runAgentTests() {
     rawText: 'Spent 100 on esoteric quantum widgets',
     knownCategories,
   });
-  if (!res3.success || res3.entries[0].categoryName !== 'Uncategorized') {
-    console.log('Category was:', res3.entries[0]?.categoryName);
+  if (!res3.success || res3.entries[0]?.categoryName !== 'Uncategorized') {
+    throw new Error(`Test 3 failed: expected Uncategorized, got: ${JSON.stringify(res3)}`);
   }
   console.log('✓ Test 3 passed:', res3.entries[0]);
 

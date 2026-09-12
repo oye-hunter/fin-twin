@@ -85,11 +85,30 @@ export const entries = pgTable('entries', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
+// Slack Links (Inbound AI Dump Channel)
+export const slackLinks = pgTable('slack_links', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: text('user_id')
+    .notNull()
+    .unique()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  slackUserId: text('slack_user_id').unique(),
+  linkCode: text('link_code'),
+  pendingDump: text('pending_dump'),
+  linkedAt: timestamp('linked_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
 // Relations
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ many, one }) => ({
   people: many(people),
   categories: many(categories),
   entries: many(entries),
+  slackLink: one(slackLinks),
+}));
+
+export const slackLinksRelations = relations(slackLinks, ({ one }) => ({
+  user: one(users, { fields: [slackLinks.userId], references: [users.id] }),
 }));
 
 export const peopleRelations = relations(people, ({ one, many }) => ({

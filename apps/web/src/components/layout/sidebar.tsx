@@ -9,6 +9,7 @@ import {
   Sparkles,
   Users,
   Tag,
+  Settings,
   LogOut,
   Compass,
   X,
@@ -31,6 +32,7 @@ export function Sidebar({ mobileOpen = false, onCloseMobile }: SidebarProps) {
     { href: '/dump', label: 'AI Dump', icon: Sparkles, badge: 'AI' },
     { href: '/people', label: 'People & Debts', icon: Users },
     { href: '/categories', label: 'Categories', icon: Tag },
+    { href: '/settings', label: 'Settings', icon: Settings },
   ];
 
   return (
