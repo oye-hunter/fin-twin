@@ -105,12 +105,8 @@ fin-twin/
 
 * **Framework:** [Next.js 16](https://nextjs.org/) (Turbopack, App Router), [React 19](https://react.dev/), TypeScript
 * **Monorepo:** [Turborepo](https://turbo.build/) + [pnpm workspaces](https://pnpm.io/)
-<<<<<<< Updated upstream
-* **AI Provider:** [Groq SDK](https://groq.com/) (`llama-3.3-70b-versatile` / `llama-3.1-8b-instant`)
-=======
 * **AI Provider:** [Groq SDK](https://groq.com/) (`openai/gpt-oss-20b` structured output + `whisper-large-v3-turbo` audio transcription)
 * **Chat Integration:** [Slack Events & Interactivity API](https://api.slack.com/) (1:1 DMs, Block Kit confirmation cards)
->>>>>>> Stashed changes
 * **Database & ORM:** [NeonDB](https://neon.tech/) (Serverless Postgres) + [Drizzle ORM](https://orm.drizzle.team/)
 * **State & Data Fetching:** [TanStack Query v5](https://tanstack.com/query) (React Query)
 * **Animation:** [GSAP 3](https://gsap.com/) + [@gsap/react](https://gsap.com/resources/React)
