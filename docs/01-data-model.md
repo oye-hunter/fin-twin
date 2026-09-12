@@ -4,7 +4,7 @@ Drizzle ORM schema, targeting NeonDB (Postgres). This is a spec for `packages/db
 — exact column types can be adapted to Drizzle's Postgres syntax, but do not change the
 shape (tables, relationships, enums) without updating this doc first.
 
-## Tables
+## Tables (Phase 1 — hackathon build)
 
 ### `users`
 Managed by Better Auth — do not hand-roll. Reference its generated schema for exact shape.
@@ -54,7 +54,7 @@ The core table. Every dump-parsed or manually-added money movement lands here.
 | reminderSentAt | timestamp, nullable | last time a reminder email was sent for this entry |
 | createdAt | timestamp | default now |
 
-## Key relationships
+## Key relationships (Phase 1)
 - `entries.personId` → `people.id` (nullable, only for lend/borrow)
 - `entries.categoryId` → `categories.id` (nullable, falls back to Uncategorized)
 - `people` and `categories` and `entries` are all scoped to `userId`
@@ -65,3 +65,48 @@ The core table. Every dump-parsed or manually-added money movement lands here.
 - Group-by `categoryId`, sum `amount`, filtered to `direction = 'expense'`, current month — for the category breakdown chart
 - Day-by-day or week-by-week sum of expenses within the current month — for the trend chart
 - All entries where `direction = 'lend'` and `status = 'open'`, joined to `people` for name/email — for the "money owed to you" list
+
+---
+
+## Tables (Phase 2 — post-hackathon additions)
+
+### `telegram_links`
+Maps a user's Fin-Twin account to their Telegram chat, via a one-time linking code generated in the web app.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | uuid, PK | |
+| userId | uuid, FK → users.id, unique | one Telegram chat per account |
+| telegramChatId | text, unique | Telegram's chat ID for this user, once linked |
+| linkCode | text, nullable | the one-time code shown in-app before linking; cleared once used |
+| linkedAt | timestamp, nullable | null until the user actually sends the code to the bot |
+| createdAt | timestamp | default now |
+
+### `budgets`
+A monthly spending cap the user sets per category.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | uuid, PK | |
+| userId | uuid, FK → users.id | owner |
+| categoryId | uuid, FK → categories.id | one budget row per category per user |
+| monthlyLimit | numeric, required | |
+| createdAt | timestamp | default now |
+
+### `repayments`
+Partial paybacks logged against an open `lend`/`borrow` entry, so a debt doesn't have to be all-or-nothing settled.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | uuid, PK | |
+| entryId | uuid, FK → entries.id | the parent lend/borrow entry this repayment reduces |
+| amount | numeric, required | |
+| date | date, required | |
+| createdAt | timestamp | default now |
+
+**Note:** an entry's outstanding balance is `entries.amount` minus the sum of its `repayments.amount`. `entries.status` moves to `settled` once that balance hits zero — this should be computed, not manually toggled once repayments exist.
+
+## Key relationships (Phase 2 additions)
+- `telegram_links.userId` → `users.id` (1:1)
+- `budgets.userId` → `users.id`, `budgets.categoryId` → `categories.id`
+- `repayments.entryId` → `entries.id` (many repayments per entry)
