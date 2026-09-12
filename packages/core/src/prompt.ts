@@ -13,19 +13,7 @@ Rules:
 5. 'date': Extract ISO date string (YYYY-MM-DD) if explicitly mentioned (e.g. "yesterday", "last Friday", "2026-08-10"). If not mentioned, return null.
 6. 'note': Brief clean summary of what this specific entry was for.
 7. A single sentence can contain multiple transactions (e.g., "Paid 45 for dinner and lent 20 to Bob"). Decompose them into separate items in the 'entries' array.
-8. Output MUST be strictly valid JSON matching the schema:
-{
-  "entries": [
-    {
-      "amount": number,
-      "direction": "expense" | "income" | "lend" | "borrow",
-      "categoryName": string | null,
-      "personName": string | null,
-      "date": string | null,
-      "note": string | null
-    }
-  ]
-}`;
+8. Output must adhere strictly to the schema.`;
 
 export function buildUserPrompt(rawText: string, knownCategories: string[]): string {
   const categoriesList = knownCategories.join(', ');

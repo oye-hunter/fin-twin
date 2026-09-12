@@ -10,6 +10,8 @@
     "BETTER_AUTH_URL",
     "RESEND_API_KEY",
     "EMAIL_FROM",
+    "SLACK_BOT_TOKEN",
+    "SLACK_SIGNING_SECRET",
     "NODE_ENV"
   ],
   "tasks": {
@@ -25,7 +27,9 @@
         "BETTER_AUTH_API_KEY",
         "BETTER_AUTH_URL",
         "RESEND_API_KEY",
-        "EMAIL_FROM"
+        "EMAIL_FROM",
+        "SLACK_BOT_TOKEN",
+        "SLACK_SIGNING_SECRET"
       ]
     },
     "test": {

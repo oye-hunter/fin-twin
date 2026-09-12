@@ -1,5 +1,5 @@
-import Groq from 'groq-sdk';
-import { dumpPayloadSchema } from './dump';
+import Groq, { toFile } from 'groq-sdk';
+import { dumpPayloadSchema, dumpJsonSchema } from './dump';
 import { matchCategory } from './categories';
 import { SYSTEM_PROMPT, buildUserPrompt } from './prompt';
 import type { ParseDumpResult, ValidatedEntry } from './types';
@@ -8,6 +8,10 @@ import * as path from 'path';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 dotenv.config({ path: path.resolve(process.cwd(), '../../.env') });
+
+export function groqModel(): string {
+  return process.env.GROQ_MODEL || 'openai/gpt-oss-20b';
+}
 
 export interface ParseOptions {
   rawText: string;
@@ -21,7 +25,7 @@ export async function parseDumpEntries(options: ParseOptions): Promise<ParseDump
     rawText,
     knownCategories,
     apiKey = process.env.GROQ_KEY || process.env.GROQ_API_KEY,
-    model = 'llama-3.3-70b-versatile',
+    model = groqModel(),
   } = options;
 
   if (!rawText || !rawText.trim()) {
@@ -58,7 +62,14 @@ export async function parseDumpEntries(options: ParseOptions): Promise<ParseDump
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userPrompt },
         ],
-        response_format: { type: 'json_object' },
+        response_format: {
+          type: 'json_schema',
+          json_schema: {
+            name: 'dump_payload',
+            strict: true,
+            schema: dumpJsonSchema,
+          },
+        } as any,
         temperature: 0.1,
       });
 
@@ -114,3 +125,34 @@ export async function parseDumpEntries(options: ParseOptions): Promise<ParseDump
     error: 'Parsing failed after retries',
   };
 }
+
+export interface TranscribeOptions {
+  audioBuffer: Buffer;
+  filename?: string;
+  mimeType?: string;
+  apiKey?: string;
+  model?: string;
+}
+
+export async function transcribeAudio(options: TranscribeOptions): Promise<string> {
+  const {
+    audioBuffer,
+    filename = 'audio.mp3',
+    apiKey = process.env.GROQ_KEY || process.env.GROQ_API_KEY,
+    model = 'whisper-large-v3-turbo',
+  } = options;
+
+  if (!apiKey) {
+    throw new Error('Groq API Key is not configured for audio transcription');
+  }
+
+  const groq = new Groq({ apiKey });
+  const file = await toFile(audioBuffer, filename);
+  const response = await groq.audio.transcriptions.create({
+    file,
+    model,
+  });
+
+  return response.text;
+}
+
