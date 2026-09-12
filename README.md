@@ -2,15 +2,22 @@
 
 > **Your AI financial counterpart** — dump raw expenses and lent money in conversational language, track cashflow with deterministic precision, and recover money owed to you without awkward texts.
 
-[![Next.js](https://img.shields.io/badge/Next.js-15.1-black?logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.3-black?logo=next.js)](https://nextjs.org/)
 [![Turborepo](https://img.shields.io/badge/Turborepo-Monorepo-ef4444?logo=turborepo)](https://turbo.build/)
-[![Groq](https://img.shields.io/badge/Groq-Llama%203.3-f97316)](https://groq.com/)
+[![Groq](https://img.shields.io/badge/Groq-gpt--oss--20b-f97316)](https://groq.com/)
 [![NeonDB](https://img.shields.io/badge/NeonDB-Serverless%20Postgres-00e599?logo=postgresql)](https://neon.tech/)
 [![Drizzle ORM](https://img.shields.io/badge/Drizzle-ORM-C5F74F)](https://orm.drizzle.team/)
 [![TanStack Query](https://img.shields.io/badge/TanStack%20Query-v5-ff4154?logo=reactquery)](https://tanstack.com/query)
-[![GSAP](https://img.shields.io/badge/GSAP-3.12-88CE02?logo=greensock)](https://gsap.com/)
+[![Slack](https://img.shields.io/badge/Slack-Inbound%20AI%20Dump-4A154B?logo=slack)](https://slack.com/)
 
 ---
+
+## 📖 About Fin-Twin
+
+**Fin-Twin** is a personal finance platform designed to eliminate the friction that causes people to abandon budgeting. Traditional expense trackers force you through tedious form fields, category dropdowns, and date pickers for every single purchase, turning everyday accounting into a chore. Fin-Twin replaces this friction with conversational intake: you simply dump your money movements in natural, everyday language — such as *"Spent $45 on dinner and lent $20 to Sarah for coffee"* — either directly through the web application or on the go via 1:1 Slack direct messages and voice notes. An ultra-fast Groq-powered AI agent parses and decomposes compound statements into structured transactions, matching known categories and linking debts to real contacts with zero manual data entry.
+
+Crucially, Fin-Twin is engineered around a **deterministic, zero-hallucination philosophy**: artificial intelligence is strictly confined to unstructured text and voice parsing. All financial calculations, monthly totals, category breakdowns, and trend charts are computed with pure, deterministic SQL math over structured records in NeonDB Postgres. By combining natural language logging, seamless chat integrations, automated voice transcription via Groq Whisper, and built-in contact lending reminders, Fin-Twin acts as your effortless financial counterpart — keeping your financial picture organized, reliable, and always up to date.
+
 
 ## 🌟 The Problem & The Solution
 
@@ -57,8 +64,14 @@
 * Predefined starter categories (*Food, Groceries, Fuel, Transport, Trips, Bills, Rent, Entertainment, Salary/Income, Uncategorized*).
 * Custom user-defined category creation.
 
-### 7. 🎨 Sidebar Navigation & Responsive Drawer
-* **Desktop Sidebar:** Fixed left drawer with instant access to Dashboard, Entries, AI Dump, People, and Categories.
+### 7. 💬 Slack Inbound AI Dump & Voice Notes (`/settings`)
+* **1:1 Slack Direct Messaging:** Link your personal Slack account with a simple one-time verification code.
+* **Text & Voice Intake:** Send typed messages or record voice clips describing expenses or income on the go.
+* **Automated Audio Transcription:** Voice clips are transcribed via Groq's high-speed Whisper model (`whisper-large-v3-turbo`) and decomposed into structured entries.
+* **Interactive Confirmations:** The bot returns parsed entries with Slack Block Kit interactive buttons (`[ ✅ Confirm & Save ]` / `[ ❌ Cancel ]`) or accepts simple "yes" text replies.
+
+### 8. 🎨 Sidebar Navigation & Responsive Drawer
+* **Desktop Sidebar:** Fixed left drawer with instant access to Dashboard, Entries, AI Dump, People, Categories, and Settings.
 * **Mobile Slide-Over Drawer:** Touch-friendly hamburger menu for smartphones and tablets.
 * **Context-Aware Shell:** Sidebar automatically hides on public routes (`/`, `/login`, `/register`) and activates within the app.
 
@@ -69,13 +82,13 @@
 ```
 fin-twin/
 ├── apps/
-│   └── web/                   → Next.js 15 App Router (React 19, Tailwind CSS, TanStack Query, GSAP)
-│       ├── src/app/           → App routes (/, /dashboard, /entries, /dump, /people, /categories, /login)
+│   └── web/                   → Next.js 16 App Router (React 19, Tailwind CSS, TanStack Query, GSAP)
+│       ├── src/app/           → App routes (/, /dashboard, /entries, /dump, /people, /categories, /settings, /api)
 │       ├── src/components/    → UI design system, sidebar layout, landing sections, dialogs, charts
-│       └── src/lib/           → TanStack Query hooks, Better Auth client, email utility
+│       └── src/lib/           → TanStack Query hooks, Better Auth client, Slack integration, email utility
 ├── packages/
-│   ├── core/                  → Groq AI Dump parser, Zod output schemas, category matching engine
-│   └── db/                    → Drizzle ORM + NeonDB Postgres schema, client, and seed script
+│   ├── core/                  → Groq AI Dump parser, Whisper audio transcriber, Zod output schemas
+│   └── db/                    → Drizzle ORM + NeonDB Postgres schema, client, and migrations
 ├── docs/                      → Technical documentation & specifications
 │   ├── 00-project-overview.md
 │   ├── 01-data-model.md
@@ -90,9 +103,14 @@ fin-twin/
 
 ## 🛠️ Tech Stack
 
-* **Framework:** [Next.js 15](https://nextjs.org/) (App Router), [React 19](https://react.dev/), TypeScript
+* **Framework:** [Next.js 16](https://nextjs.org/) (Turbopack, App Router), [React 19](https://react.dev/), TypeScript
 * **Monorepo:** [Turborepo](https://turbo.build/) + [pnpm workspaces](https://pnpm.io/)
+<<<<<<< Updated upstream
 * **AI Provider:** [Groq SDK](https://groq.com/) (`llama-3.3-70b-versatile` / `llama-3.1-8b-instant`)
+=======
+* **AI Provider:** [Groq SDK](https://groq.com/) (`openai/gpt-oss-20b` structured output + `whisper-large-v3-turbo` audio transcription)
+* **Chat Integration:** [Slack Events & Interactivity API](https://api.slack.com/) (1:1 DMs, Block Kit confirmation cards)
+>>>>>>> Stashed changes
 * **Database & ORM:** [NeonDB](https://neon.tech/) (Serverless Postgres) + [Drizzle ORM](https://orm.drizzle.team/)
 * **State & Data Fetching:** [TanStack Query v5](https://tanstack.com/query) (React Query)
 * **Animation:** [GSAP 3](https://gsap.com/) + [@gsap/react](https://gsap.com/resources/React)
